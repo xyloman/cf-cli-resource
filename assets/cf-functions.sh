@@ -154,11 +154,6 @@ function cf_service_exists() {
   cf curl /v2/service_instances | jq -e --arg name "$service_instance" '.resources[] | select(.entity.name == $name) | true' >/dev/null 
 }
 
-function cf_get_service_guid() { 
-  local service_instance=$1
-  service_guid=$(cf service $service_instance --guid)
-}
-
 function cf_create_service() {
   local service=$1
   local plan=$2
