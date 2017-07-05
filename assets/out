@@ -116,6 +116,33 @@ echo -e $params | jq -c '.commands[]' | while read -r options; do
     if [ "true" = "$wait" ]; then
       cf_wait_for_service_instance "$service_instance" "$timeout"
     fi
+  elif [ "update-service" = "$command" ]; then
+  
+  	plan=$(echo $options | jq -r '.plan //empty')
+    service_instance=$(echo $options | jq -r '.service_instance //empty')
+    configuration=$(echo $options | jq -r '.configuration //"{}"')
+    tags=$(echo $options | jq -r '.tags //empty')
+    timeout=$(echo $options | jq -r '.timeout //empty')
+    wait=$(echo $options | jq -r '.wait_for_service //"false"')
+    
+    cf_target "$org" "$space"
+    
+    if [ cf_service_exists "$service_instance" 2>/dev/null ]; then
+      echo -e 'Executing \e[33m'"$command"$'\e[0m: '"$service_instance"
+      cf_update_service "$service_instance" "$plan" "$configuration" "$tags"
+    else
+		service=$(echo $options | jq -r '.service //empty')
+		
+	    echo -e 'Executing \e[33m'"create-service"$'\e[0m: '"$service_instance"
+	    
+	    cf_create_service "$service" "$plan" "$service_instance" "$configuration" "$tags"         
+    fi
+    
+
+    if [ "true" = "$wait" ]; then
+      cf_wait_for_service_instance "$service_instance" "$timeout"
+    fi
+    
   elif [ "wait-for-service" = "$command" ]; then
     service_instance=$(echo $options | jq -r '.service_instance //empty')
     timeout=$(echo $options | jq -r '.timeout //empty')

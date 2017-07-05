@@ -151,7 +151,7 @@ function cf_delete_user() {
 
 function cf_service_exists() {
   local service_instance=$1
-  cf curl /v2/service_instances | jq -e --arg name "$service_instance" '.resources[] | select(.entity.name == $name) | true' >/dev/null
+  cf curl /v2/service_instances | jq -e --arg name "$service_instance" '.resources[] | select(.entity.name == $name) | true' >/dev/null 
 }
 
 function cf_create_service() {
@@ -161,6 +161,14 @@ function cf_create_service() {
   local configuration=$4
   local tags=$5
   cf create-service "$service" "$plan" "$service_instance" -c "$configuration" -t "$tags"
+}
+
+function cf_update_service() {
+  local service_instance=$1
+  local plan=$2
+  local configuration=$3
+  local tags=$4
+  cf update-service "$service_instance" -p "$plan" -c "$configuration" -t "$tags"
 }
 
 function cf_delete_service() {
