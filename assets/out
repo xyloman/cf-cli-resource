@@ -127,15 +127,13 @@ echo -e $params | jq -c '.commands[]' | while read -r options; do
     
     cf_target "$org" "$space"
     
-    if [ cf_service_exists "$service_instance" 2>/dev/null ]; then
+    if [ -n "$(cf_get_service_guid $service_instance)" ]; then
       echo -e 'Executing \e[33m'"$command"$'\e[0m: '"$service_instance"
       cf_update_service "$service_instance" "$plan" "$configuration" "$tags"
     else
-		service=$(echo $options | jq -r '.service //empty')
-		
-	    echo -e 'Executing \e[33m'"create-service"$'\e[0m: '"$service_instance"
-	    
-	    cf_create_service "$service" "$plan" "$service_instance" "$configuration" "$tags"         
+      service=$(echo $options | jq -r '.service //empty')
+      echo -e 'Executing \e[33m'"create-service"$'\e[0m: '"$service_instance"
+      cf_create_service "$service" "$plan" "$service_instance" "$configuration" "$tags"         
     fi
     
 
