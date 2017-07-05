@@ -156,12 +156,7 @@ function cf_service_exists() {
 
 function cf_get_service_guid() { 
   local service_instance=$1
-  local guid=$(cf service $service_instance --guid)
-  if [[ -z $(echo $guid | grep 'FAILED') ]]; then 
-    echo ""
-  else
-    echo "$guid"
-  fi
+  service_guid=$(cf service $service_instance --guid)
 }
 
 function cf_create_service() {
