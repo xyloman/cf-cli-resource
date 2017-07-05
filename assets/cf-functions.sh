@@ -157,7 +157,7 @@ function cf_service_exists() {
 function cf_get_service_guid() { 
   local service_instance=$1
   local guid=$(cf service $service_instance --guid)
-  if [ $? = 0 ]; then 
+  if [ $? -ne 0 ]; then 
     return ""
   else
     return $guid
